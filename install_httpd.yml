@@ -1,0 +1,37 @@
+---
+- name: Installing HTTPD Web Server
+  hosts: localhost
+  become: yes
+
+  tasks:
+    - name: Upgrade all packages
+      yum:
+        name: '*'
+        state: latest
+
+    - name: Ensure the latest list of packages is installed
+      yum:
+        name: "{{ packages }}"
+        state: latest
+      vars:
+        packages:
+          - httpd
+          - httpd-tools
+          - php
+    - name: deploy html document to DocumentRoot
+      template:
+        src: /etc/ansible/Website/index.html
+        dest: /var/www/html/index.html
+      vars:
+        greeting: "{{ gretting }}"
+
+    - name: ensure apache is running
+      service:
+        name: httpd
+        state: started
+
+  handlers:
+    - name: restart apache
+      service:
+        name: httpd
+        state: restarted
