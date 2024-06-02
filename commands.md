@@ -26,7 +26,6 @@
         │   └── LINUX      - Exact Group_Name like in hosts file
         └── hosts          - Inventory File
 
-
 # Commands
 - `ansible all -m ping` - Ping all hosts using Ansible to check connectivity
 - `ansible all -m setup` - Gather facts about all hosts using Ansible
