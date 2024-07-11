@@ -1,0 +1,77 @@
+---
+- name: Install Prometheus Node Exporter
+  hosts: all
+  become: yes
+
+  vars:
+    node_exporter_version: "1.8.1"
+
+  tasks:
+    - name: Ensure necessary packages are installed
+      package:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - wget
+        - tar
+
+    - name: Download Prometheus Node Exporter
+      get_url:
+        url: "https://github.com/prometheus/node_exporter/releases/download/v{{ node_exporter_version }}/node_exporter-{{ node_exporter_version }}.linux-amd64.tar.gz"
+        dest: "/tmp/node_exporter-{{ node_exporter_version }}.linux-amd64.tar.gz"
+
+    - name: Extract Node Exporter archive
+      ansible.builtin.unarchive:
+        src: "/tmp/node_exporter-{{ node_exporter_version }}.linux-amd64.tar.gz"
+        dest: "/tmp/"
+        remote_src: yes
+
+    - name: Move Node Exporter binary to /usr/bin/
+      ansible.builtin.command:
+        cmd: "mv /tmp/node_exporter-{{ node_exporter_version }}.linux-amd64/node_exporter /usr/bin/"
+        creates: /usr/bin/node_exporter
+
+    - name: Clean up temporary files
+      file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - "/tmp/node_exporter-{{ node_exporter_version }}.linux-amd64"
+        - "/tmp/node_exporter-{{ node_exporter_version }}.linux-amd64.tar.gz"
+
+    - name: Add node_exporter user
+      ansible.builtin.user:
+        name: node_exporter
+        system: yes
+        shell: /bin/false
+
+    - name: Set ownership of Node Exporter binary
+      ansible.builtin.file:
+        path: /usr/bin/node_exporter
+        owner: node_exporter
+        group: node_exporter
+        state: file
+
+    - name: Create systemd service unit file
+      ansible.builtin.copy:
+        content: |
+          [Unit]
+          Description=Prometheus Node Exporter
+          After=network.target
+
+          [Service]
+          User=node_exporter
+          Group=node_exporter
+          Type=simple
+          Restart=on-failure
+          ExecStart=/usr/bin/node_exporter
+
+          [Install]
+          WantedBy=multi-user.target
+        dest: /etc/systemd/system/node_exporter.service
+
+    - name: Start and enable Node Exporter service
+      ansible.builtin.systemd:
+        name: node_exporter
+        state: started
+        enabled: yes

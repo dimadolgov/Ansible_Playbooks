@@ -1,0 +1,10 @@
+---
+- name: Task Install Packages
+  apt:
+    pkg: 
+      - htop
+      - tree
+      - vim
+      - curl
+
+    state: present # absent ( To Uninstall ) # present # latest

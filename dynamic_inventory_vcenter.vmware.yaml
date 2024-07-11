@@ -1,0 +1,17 @@
+# Install the vSphere Automation SDK Python library:
+# pip install --upgrade pip setuptools
+# pip install --upgrade vapi-runtime
+# pip install --upgrade git+https://github.com/vmware/vsphere-automation-sdk-python.git
+# add to ansible.cfg 
+# [inventory]
+# enable_plugins = vmware_vm_inventory
+# ansible-inventory --list -i vmware_dynamic_inventory.vmware.yaml
+
+
+plugin: vmware_vm_inventory
+strict: False
+hostname: VCSA_IP
+username: administrator@vsphere.local
+password: 'PASSWORD'
+validate_certs: False
+with_tags: True
