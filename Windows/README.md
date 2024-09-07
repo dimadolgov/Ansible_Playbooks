@@ -27,8 +27,11 @@
             ├── Create_SQL_Disk.yaml
             ├── Prerequirements.yaml
             └── SQL_Install.yaml
+---
 
 ## krb5.conf ##
+### krb5.conf ###
+```
 [libdefaults]
     default_realm = DOMAIN.LOCAL
     dns_lookup_realm = false
@@ -51,3 +54,4 @@
 [domain_realm]
     domain.local = DOMAIN.LOCAL
     .domain.local = DOMAIN.LOCAL
+```
