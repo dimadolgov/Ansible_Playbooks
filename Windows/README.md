@@ -28,7 +28,7 @@
             ├── Prerequirements.yaml
             └── SQL_Install.yaml
 
-# krb5.conf
+## krb5.conf ##
 [libdefaults]
     default_realm = DOMAIN.LOCAL
     dns_lookup_realm = false
